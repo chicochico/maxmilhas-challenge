@@ -1,5 +1,8 @@
+import re
+
 from django.db import models
 from django.core.exceptions import ValidationError
+
 
 class CPF(models.Model):
     """
@@ -20,6 +23,10 @@ class CPF(models.Model):
         return self.number
 
     def save(self, *args, **kwargs):
+        """
+        Override save so validation can be called
+        automatically for manually created objects
+        """
         self.full_clean()
         return super(CPF, self).save(*args, **kwargs)
 
@@ -33,10 +40,13 @@ class CPF(models.Model):
     def clean(self):
         """
         CPF validation logic
+        raises: ValidationError
         """
         def checksum(numbers):
             """
             Calculates checksum
+            numbers: list of numbers to calculate checksum
+            returns: integer
             """
             lenght = len(numbers) + 1
             result = sum([i * j for i, j in zip(numbers, range(lenght, 1, -1))]) % 11
@@ -45,27 +55,27 @@ class CPF(models.Model):
             else:
                 return 11 - result
 
-        if len(self.number) != 14:
-            raise ValidationError('invalid CPF')
+        cpf_number = self.number
 
-        digits = list(''.join(self.number[:11].split('.')))
-        validation_digits = list(self.number[12:14])
-
-        try:
+        if re.match(r'^\d{3}.\d{3}.\d{3}-\d{2}$', cpf_number):
+            cpf_number = cpf_number.replace('.', '')
+            cpf_number = cpf_number.replace('-', '')
+            digits = list(cpf_number[:9])
+            validation_digits = list(cpf_number[9:11])
             numbers = [int(n) for n in digits]
             checksum_numbers = [int(n) for n in validation_digits]
-        except ValueError:
+            sum1 = checksum(numbers)
+            numbers.append(sum1)
+            sum2 = checksum(numbers)
+
+            if (sum1 != checksum_numbers[0] or
+                sum2 != checksum_numbers[1] or
+                len(set(numbers + checksum_numbers)) == 1):
+                # checksum don't match or all the same digits
+                raise ValidationError('invalid CPF')
+        else:
             raise ValidationError('invalid CPF')
 
-        sum1 = checksum(numbers)
-        numbers.append(sum1)
-        sum2 = checksum(numbers)
-
-        if (sum1 != checksum_numbers[0] or
-            sum2 != checksum_numbers[1] or
-            len(set(numbers + checksum_numbers)) == 1):
-            # checksum don't match or all the same digits
-            raise ValidationError('invalid CPF')
 
 
 

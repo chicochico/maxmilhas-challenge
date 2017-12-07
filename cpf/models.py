@@ -41,23 +41,28 @@ class CPF(models.Model):
             else:
                 return 11 - result
 
-        if len(self.number) == 14:
-            digits = list(''.join(self.number[:11].split('.')))
-            validation_digits = list(self.number[12:14])
-        elif len(self.number) == 11:
-            digits = list(self.number[:9])
-            validation_digits = list(self.number[9:11])
-        else:
+        if len(self.number) != 14:
             raise ValidationError('invalid CPF')
 
-        numbers = [int(n) for n in digits]
-        checksum_numbers = [int(n) for n in validation_digits]
+        digits = list(''.join(self.number[:11].split('.')))
+        validation_digits = list(self.number[12:14])
+
+        try:
+            numbers = [int(n) for n in digits]
+            checksum_numbers = [int(n) for n in validation_digits]
+        except ValueError:
+            raise ValidationError('invalid CPF')
+
         sum1 = checksum(numbers)
         numbers.append(sum1)
         sum2 = checksum(numbers)
 
-        if sum1 != checksum_numbers[0] or sum2 != checksum_numbers[1]:
+        if (sum1 != checksum_numbers[0] or
+            sum2 != checksum_numbers[1] or
+            len(set(numbers + checksum_numbers)) == 1):
+            # checksum don't match or all the same digits
             raise ValidationError('invalid CPF')
+
 
 
 class CPF_Blacklist(models.Model):

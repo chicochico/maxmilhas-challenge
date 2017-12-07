@@ -9,7 +9,7 @@ class CPF(models.Model):
         max_length=14,
         null=False,
         blank=False,
-        primary_key=True,
+        unique=True,
     )
 
     class Meta:
@@ -19,14 +19,16 @@ class CPF(models.Model):
     def __str__(self):
         return self.number
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(CPF, self).save(*args, **kwargs)
+
     @classmethod
     def create(cls, number):
         """
         Create a new CPF and save it to the database
         """
-        cpf = cls(number=number)
-        cpf.clean()
-        return cpf.save()
+        return cls.objects.create(number=number)
 
     def clean(self):
         """
@@ -67,7 +69,7 @@ class CPF(models.Model):
 
 
 
-class CPF_Blacklist(models.Model):
+class CPFBlacklist(models.Model):
     """
     Blaclist for CPFs
     """
@@ -75,6 +77,8 @@ class CPF_Blacklist(models.Model):
         CPF,
         on_delete=models.CASCADE,
     )
+
+    added_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Blacklisted CPF'
@@ -84,22 +88,28 @@ class CPF_Blacklist(models.Model):
         return self.cpf.number
 
     @classmethod
-    def add_cpf(cls, cpf):
+    def add_cpf(cls, cpf_number):
         """
         Add a new CPF to the blacklist
         cpf: CPF object to be added
         returns: Added CPF blacklist object
         """
+        cpf, _ = CPF.objects.get_or_create(number=cpf_number)
         return cls.objects.create(cpf=cpf)
 
     @classmethod
-    def remove_cpf(cls, cpf):
+    def remove_cpf(cls, cpf_number):
         """
         Remove a CPF from the blacklist
         cpf: the cpf to be removed
         returns: None
+        raises: DoesNotExist
         """
-        cls.objects.get(cpf=cpf).delete()
+        try:
+            cls.objects.get(cpf__number=cpf_number).delete()
+        except CPFBlacklist.DoesNotExist:
+            raise
 
-    def is_blacklisted(self, cpf_number):
-        return CPF.objects.get(number=cpf_number).exists()
+    @classmethod
+    def is_blacklisted(cls, cpf_number):
+        return cls.objects.filter(cpf__number=cpf_number).exists()

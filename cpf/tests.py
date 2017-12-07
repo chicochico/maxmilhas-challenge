@@ -1,6 +1,6 @@
 from django.test import TestCase
 from cpf.models import CPF, CPF_Blacklist
-
+from django.core.exceptions import ValidationError
 
 class TestCPFInsertion(TestCase):
     def setUp(self):
@@ -13,9 +13,13 @@ class TestCPFInsertion(TestCase):
         with self.assertRaises(ValidationError):
             CPF.create('foobar')
 
-    def test_cpf_validation_digits(self):
+    def test_invalid_cpf(self):
         with self.assertRaises(ValidationError):
             CPF.create('234.787.863-81')
+
+    def test_invalid_cpf_with_letters(self):
+        with self.assertRaises(ValidationError):
+            CPF.create('234.7A7.863-81')
 
     def test_invalid_cpf_with_repeated_digits(self):
         with self.assertRaises(ValidationError):

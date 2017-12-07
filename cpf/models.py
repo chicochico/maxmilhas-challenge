@@ -24,7 +24,9 @@ class CPF(models.Model):
         """
         Create a new CPF and save it to the database
         """
-        return cls.objects.create(number=number)
+        cpf = cls(number=number)
+        cpf.clean()
+        return cpf.save()
 
     def clean(self):
         """

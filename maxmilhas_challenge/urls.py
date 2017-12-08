@@ -15,7 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
+from rest_framework.documentation import include_docs_urls
+from rest_framework import routers
+from cpf import views
+
+
+router = routers.DefaultRouter()
+router.register(r'cpf-blacklist', views.ListBlacklistedCPF, 'blacklist')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/docs/', include_docs_urls(title='CPF Blacklist'), name='api-docs'),
+    url(r'^api/v1/check-cpf/', views.check_cpf),
 ]

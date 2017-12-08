@@ -111,7 +111,7 @@ class CPFBlacklist(models.Model):
     def remove_cpf(cls, cpf_number):
         """
         Remove a CPF from the blacklist
-        cpf: the cpf to be removed
+        cpf_number: string with cpf_number
         returns: None
         raises: DoesNotExist
         """
@@ -122,4 +122,9 @@ class CPFBlacklist(models.Model):
 
     @classmethod
     def is_blacklisted(cls, cpf_number):
+        """
+        Check if a cpf is in the blacklist
+        cpf_number: string with cpf_number
+        returns: boolean
+        """
         return cls.objects.filter(cpf__number=cpf_number).exists()

@@ -77,8 +77,6 @@ class CPF(models.Model):
             raise ValidationError('invalid CPF')
 
 
-
-
 class CPFBlacklist(models.Model):
     """
     Blaclist for CPFs

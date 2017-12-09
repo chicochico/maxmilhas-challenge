@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/docs/', include_docs_urls(title='CPF Blacklist'), name='api-docs'),
     url(r'^api/v1/check-cpf/', views.check_cpf),
+    url(r'^api/v1/status/', views.status),
 ]

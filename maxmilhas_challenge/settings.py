@@ -124,4 +124,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# server start time
 START_TIME = datetime.now()

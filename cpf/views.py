@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.cache import cache
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, list_route
 
 from cpf.models import CPFBlacklist
 from cpf.serializers import CPFBlacklistSerializer
@@ -24,7 +24,7 @@ def increment_requests_count():
 
 class ListBlacklistedCPF(viewsets.ViewSet):
     """
-    List all blacklisted CPFs
+    list: list all blacklisted CPFs
     """
     def list(self, request):
         increment_requests_count()
@@ -33,17 +33,17 @@ class ListBlacklistedCPF(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-@api_view(['GET'])
-def check_cpf(request):
-    """
-    Check if a CPF is blacklisted
-    """
-    increment_requests_count()
-    cpf_number = request.query_params.get('number', None)
-    if CPFBlacklist.is_blacklisted(cpf_number):
-        return Response({"cpf": cpf_number, "blacklisted": True})
-    else:
-        return Response({"cpf": cpf_number, "blacklisted": False})
+    @list_route(methods=['get'], url_path='check-cpf', url_name='check-cpf')
+    def check_cpf(self, request):
+        """
+        Check if a CPF is blacklisted
+        """
+        increment_requests_count()
+        cpf_number = request.query_params.get('number', None)
+        if CPFBlacklist.is_blacklisted(cpf_number):
+            return Response({"cpf": cpf_number, "blacklisted": True})
+        else:
+            return Response({"cpf": cpf_number, "blacklisted": False})
 
 
 @api_view(['GET'])

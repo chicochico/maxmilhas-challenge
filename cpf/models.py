@@ -7,9 +7,10 @@ from django.core.exceptions import ValidationError
 class CPF(models.Model):
     """
     CPF - Cadastro de pessoa fisica
+    stores the CPF number in the format XXXXXXXXXXX
     """
     number = models.CharField(
-        max_length=14,
+        max_length=11,
         null=False,
         blank=False,
         unique=True,
@@ -20,7 +21,7 @@ class CPF(models.Model):
         verbose_name_plural = 'CPFs'
 
     def __str__(self):
-        return self.number
+        return self.get_formatted_cpf()
 
     def save(self, *args, **kwargs):
         """
@@ -39,7 +40,44 @@ class CPF(models.Model):
 
     def clean(self):
         """
-        CPF validation logic
+        Calls cpf validation logic
+        and strip formatting
+        """
+        self.number = self.strip_cpf_formatting()
+        if not self.is_valid():
+            raise ValidationError('invalid CPF')
+
+    def get_formatted_cpf(self):
+        """
+        Format the CPF for presentation
+        """
+        cpf = self.number
+        if len(cpf) == 11:
+            formatted = '{}.{}.{}-{}'.format(
+                cpf[:3],
+                cpf[3:6],
+                cpf[6:9],
+                cpf[9:11],
+            )
+            return formatted
+        else:
+            return cpf
+
+    def strip_cpf_formatting(self):
+        """
+        Strip the formatting of a CPF number
+        from XXX.XXX.XXX-XX to XXXXXXXXXXX
+        """
+        cpf = self.number
+        if len(cpf) == 14:
+            stripped = cpf[:3] + cpf[4:7] + cpf[8:11] + cpf[12:14]
+            return stripped
+        else:
+            return cpf
+
+    def is_valid(self):
+        """
+        Check if a cpf is valid
         raises: ValidationError
         """
         def checksum(numbers):
@@ -49,7 +87,8 @@ class CPF(models.Model):
             returns: integer
             """
             lenght = len(numbers) + 1
-            result = sum([i * j for i, j in zip(numbers, range(lenght, 1, -1))]) % 11
+            factors = zip(numbers, range(lenght, 1, -1))
+            result = sum([i * j for i, j in factors]) % 11
             if result < 2:
                 return 0
             else:
@@ -57,24 +96,25 @@ class CPF(models.Model):
 
         cpf_number = self.number
 
-        if re.match(r'^\d{3}.\d{3}.\d{3}-\d{2}$', cpf_number):
-            cpf_number = cpf_number.replace('.', '')
-            cpf_number = cpf_number.replace('-', '')
-            digits = list(cpf_number[:9])
-            validation_digits = list(cpf_number[9:11])
-            numbers = [int(n) for n in digits]
-            checksum_numbers = [int(n) for n in validation_digits]
-            sum1 = checksum(numbers)
-            numbers.append(sum1)
-            sum2 = checksum(numbers)
+        if not re.match(r'^\d{11}$', cpf_number):
+            # does not match cpf format
+            return False
 
-            if (sum1 != checksum_numbers[0] or
-                sum2 != checksum_numbers[1] or
-                len(set(numbers + checksum_numbers)) == 1):
-                # checksum don't match or all the same digits
-                raise ValidationError('invalid CPF')
+        digits = list(cpf_number[:9])
+        validation_digits = list(cpf_number[9:11])
+        numbers = [int(n) for n in digits]
+        checksum_numbers = [int(n) for n in validation_digits]
+        sum1 = checksum(numbers)
+        numbers.append(sum1)
+        sum2 = checksum(numbers)
+
+        if (sum1 != checksum_numbers[0] or
+            sum2 != checksum_numbers[1] or
+            len(set(numbers + checksum_numbers)) == 1):
+            # checksum don't match or all the same digits
+            return False
         else:
-            raise ValidationError('invalid CPF')
+            return True
 
 
 class CPFBlacklist(models.Model):

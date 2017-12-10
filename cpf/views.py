@@ -1,13 +1,13 @@
 from datetime import datetime
-from django.shortcuts import render
 from django.conf import settings
 from django.core.cache import cache
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, list_route
-
-from cpf.models import CPFBlacklist
+from rest_framework.decorators import list_route, api_view
+from cpf.models import CPF, CPFBlacklist
 from cpf.serializers import CPFBlacklistSerializer
+from cpf.serializers import CPFStatusSerializer
+from cpf.serializers import AddCPFToBlacklistSerializer
 
 
 def increment_requests_count():
@@ -22,39 +22,49 @@ def increment_requests_count():
         cache.set('requests_count', 1)
 
 
-class ListBlacklistedCPF(viewsets.ViewSet):
+class CPFBlacklistViewSet(viewsets.ViewSet):
     """
-    list: list all blacklisted CPFs
+    CPF blacklist endpoints
     """
+    queryset = CPFBlacklist.objects.all()
+    serializer_class = CPFBlacklistSerializer
+    lookup_field = 'cpf_number'
+
     def list(self, request):
+        """
+        Show all blacklisted CPF
+        """
         increment_requests_count()
-        queryset = CPFBlacklist.objects.all()
-        serializer = CPFBlacklistSerializer(queryset, many=True)
+        serializer = CPFBlacklistSerializer(self.queryset, many=True)
         return Response(serializer.data)
 
-
-    @list_route(methods=['get'], url_path='check-cpf', url_name='check-cpf')
-    def check_cpf(self, request):
+    @list_route(methods=['get'], url_path='status/(?P<cpf_number>.+)')
+    def check_cpf_status(self, request, cpf_number=None):
         """
         Check if a CPF is blacklisted
         """
         increment_requests_count()
-        cpf_number = request.query_params.get('number', None)
-        if CPFBlacklist.is_blacklisted(cpf_number):
-            return Response({"cpf": cpf_number, "blacklisted": True})
-        else:
-            return Response({"cpf": cpf_number, "blacklisted": False})
+        serializer = CPFStatusSerializer(cpf_number, many=False)
+        return Response(serializer.data)
+
+    @list_route(methods=['post'], url_path='add/(?P<cpf_number>.+)')
+    def add_to_blacklist(self, request, cpf_number=None):
+        """
+        Add a new CPF to the blacklist
+        """
+        increment_requests_count()
+        serializer = AddCPFToBlacklistSerializer(cpf_number)
+        return Response(serializer.data)
 
 
 @api_view(['GET'])
-def status(request):
+def server_status(request):
     """
     View server information
     number of requests since startup
     time since startup
     number of blacklisted CPFs
     """
-    increment_requests_count()
     return Response({
         'requests_count': cache.get('requests_count'),
         'uptime': str(datetime.now() - settings.START_TIME),

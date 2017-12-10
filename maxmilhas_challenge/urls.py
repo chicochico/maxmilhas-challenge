@@ -23,13 +23,12 @@ from cpf import views
 
 
 schema_view = get_swagger_view(title='CPF Blacklist API')
-
 router = routers.DefaultRouter()
-router.register(r'cpf-blacklist', views.ListBlacklistedCPF, 'blacklist')
+router.register(r'cpf-blacklist', views.CPFBlacklistViewSet, 'blacklist')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/v1/', include(router.urls)),
-    url(r'^api/v1/status/', views.status),
     url(r'^api/v1/docs/', schema_view),
+    url(r'^api/v1/server-status', views.server_status),
 ]

@@ -28,6 +28,6 @@ router.register(r'cpf-blacklist', views.CPFBlacklistViewSet, 'blacklist')
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/v1/', include(router.urls)),
-    url(r'^api/v1/docs/', schema_view),
-    url(r'^api/v1/server-status', views.server_status),
+    url(r'^api/v1/docs/', schema_view, name='docs'),
+    url(r'^api/v1/server-status', views.server_status, name='server-status'),
 ]

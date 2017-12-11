@@ -27,8 +27,8 @@ class CPFBlacklistViewSet(mixins.CreateModelMixin,
     serializer_class = CPFBlacklistSerializer
     lookup_field = 'cpf__number'
 
-    @list_route(methods=['get'], url_path='check-cpf')
-    def check_cpf_status(self, request):
+    @list_route(methods=['get'], url_path='check-cpf', url_name='check-cpf')
+    def check_cpf_status(self, request, number=None):
         """
         Check if a CPF is blacklisted, parameters:
 
@@ -37,7 +37,6 @@ class CPFBlacklistViewSet(mixins.CreateModelMixin,
         cpf_number = self.request.query_params.get('number', None)
         serializer = CPFStatusSerializer(cpf_number, many=False)
         return Response(serializer.data)
-
 
 
 @api_view(['GET'])

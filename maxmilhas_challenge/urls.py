@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 from cpf import views

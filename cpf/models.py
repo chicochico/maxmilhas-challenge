@@ -45,7 +45,10 @@ class CPF(models.Model):
         """
         self.number = self.strip_cpf_formatting()
         if not self.is_valid():
-            raise ValidationError('invalid CPF')
+            raise ValidationError(
+                {'number': 'Invalid CPF number.'},
+                code='invalid',
+            )
 
     def get_formatted_cpf(self):
         """

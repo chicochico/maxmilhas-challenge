@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'cpf.middleware.count_api_requests_middleware.count_api_requests_middleware',
 ]
 
 ROOT_URLCONF = 'maxmilhas_challenge.urls'

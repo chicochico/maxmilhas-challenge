@@ -10,18 +10,6 @@ from cpf.serializers import CPFStatusSerializer
 from cpf.serializers import CPFSerializer
 
 
-def increment_requests_count():
-    """
-    This function increments the total
-    requests count since starting the server
-    """
-    current_count = cache.get('requests_count')
-    if current_count is not None:
-        cache.set('requests_count', current_count + 1)
-    else:
-        cache.set('requests_count', 1)
-
-
 class CPFBlacklistViewSet(mixins.CreateModelMixin,
                           mixins.RetrieveModelMixin,
                           mixins.DestroyModelMixin,
@@ -39,7 +27,6 @@ class CPFBlacklistViewSet(mixins.CreateModelMixin,
     serializer_class = CPFBlacklistSerializer
     lookup_field = 'cpf__number'
 
-
     @list_route(methods=['get'], url_path='check-cpf')
     def check_cpf_status(self, request):
         """
@@ -47,7 +34,6 @@ class CPFBlacklistViewSet(mixins.CreateModelMixin,
 
         number -- a CPF number in the format XXXXXXXXXXX
         """
-        increment_requests_count()
         cpf_number = self.request.query_params.get('number', None)
         serializer = CPFStatusSerializer(cpf_number, many=False)
         return Response(serializer.data)

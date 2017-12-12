@@ -16,19 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
-from rest_framework import routers
-from rest_framework_swagger.views import get_swagger_view
-from cpf.views import CPFBlacklistViewSet, server_status
 
-
-schema_view = get_swagger_view(title='CPF Blacklist API')
-router = routers.DefaultRouter()
-router.register(r'cpf-blacklist', CPFBlacklistViewSet, 'blacklist')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^check-cpf/', include('cpf_site.urls')),
-    url(r'^api/v1/', include(router.urls)),
-    url(r'^api/v1/docs/', schema_view, name='docs'),
-    url(r'^api/v1/server-status', server_status, name='server-status'),
+    url(r'^api/v1/', include('api.urls')),
 ]

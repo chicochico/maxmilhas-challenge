@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'bootstrap3',
     'cpf',
+    'api',
     'cpf_site',
 ]
 

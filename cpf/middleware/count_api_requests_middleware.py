@@ -3,11 +3,10 @@ from django.core.cache import cache
 
 def count_api_requests_middleware(get_response):
     """
-    Count the number of requests made to the API
+    Count the number of requests made to the API and check-cpf page
     """
     def middleware(request):
         response = get_response(request)
-        print(request.method)
         if (request.path.startswith('/api/v1/cpf-blacklist') or
             'cpf' in request.GET and request.method == 'GET'):
             increment_requests_count()

@@ -7,7 +7,9 @@ def count_api_requests_middleware(get_response):
     """
     def middleware(request):
         response = get_response(request)
-        if request.path.startswith('/api'):
+        print(request.method)
+        if (request.path.startswith('/api/v1/cpf-blacklist') or
+            'cpf' in request.GET and request.method == 'GET'):
             increment_requests_count()
         return response
 

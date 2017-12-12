@@ -36,11 +36,12 @@ For the full interactive API documentation run the app and go [here](http://loca
 ### Running
 To run the app make sure you have [Docker](https://docs.docker.com/engine/installation/) and [Docker-compose](https://docs.docker.com/compose/install/) installed.
 
-  1. cd into the root of this project
-  2. `docker-compose up`
-  3. `docker-compose run web ./manage.py migrate`
-  4. done! open a webbrowser and go [here](http://localhost:8000)
-  5. optionally you can create a admin user to interact with admin pages:
+  1. clone this repo
+  2. cd into the root of this project
+  3. `docker-compose up`
+  4. `docker-compose run web ./manage.py migrate`
+  5. done! open a webbrowser and go [here](http://localhost:8000)
+  6. optionally you can create a admin user to interact with admin pages:
       - `docker-compose run web ./manage.py createsuperuser` and follow the instructions
 
 ### Modeling

@@ -106,7 +106,7 @@ class CPFBlacklistTestCase(APITestCase):
         """
         Use query parameters to get the status of a CPF by the number
         """
-        url = reverse('blacklist-check-cpf') + '?number=19712271374'
+        url = reverse('blacklist-check-cpf') + '?cpf=19712271374'
         response = self.client.get(url)
         expected = {
             'cpf': '19712271374',
@@ -119,7 +119,7 @@ class CPFBlacklistTestCase(APITestCase):
         """
         Test a CPF that is not in the blacklist
         """
-        url = reverse('blacklist-check-cpf') + '?number=57794218209'
+        url = reverse('blacklist-check-cpf') + '?cpf=57794218209'
         response = self.client.get(url)
         expected = {
             'cpf': '57794218209',
@@ -132,7 +132,7 @@ class CPFBlacklistTestCase(APITestCase):
         """
         Test CPF validation from query parameter
         """
-        url = reverse('blacklist-check-cpf') + '?number=invalid-cpf-number'
+        url = reverse('blacklist-check-cpf') + '?cpf=invalid-cpf-number'
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'number': 'Invalid CPF number.'})

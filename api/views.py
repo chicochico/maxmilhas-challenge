@@ -32,9 +32,9 @@ class CPFBlacklistViewSet(mixins.CreateModelMixin,
         """
         Check if a CPF is blacklisted, parameters:
 
-        number -- a CPF number in the format XXXXXXXXXXX
+        cpf -- a CPF number in the format XXXXXXXXXXX
         """
-        cpf_number = self.request.query_params.get('number', None)
+        cpf_number = self.request.query_params.get('cpf', None)
         serializer = CPFStatusSerializer(cpf_number, many=False)
         return Response(serializer.data)
 

@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework_swagger',
+    'bootstrap3',
     'cpf',
+    'cpf_site',
 ]
 
 MIDDLEWARE = [

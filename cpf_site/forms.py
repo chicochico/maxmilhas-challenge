@@ -1,5 +1,5 @@
 from django import forms
-from cpf.models import CPF, CPFBlacklist
+from cpf.models import CPF
 
 
 class CheckCPFForm(forms.Form):
@@ -23,5 +23,3 @@ class CheckCPFForm(forms.Form):
             raise forms.ValidationError('Invalid CPF number.')
         else:
             return data
-
-

@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from cpf.models import CPF, CPFBlacklist
+from cpf.models import CPFBlacklist
 
 
 class CPFBlacklistTestCase(APITestCase):
@@ -147,5 +147,3 @@ class CPFBlacklistTestCase(APITestCase):
         self.assertTrue('requests_count' in response.data)
         self.assertTrue('uptime' in response.data)
         self.assertTrue('blacklisted_cpf_count' in response.data)
-
-

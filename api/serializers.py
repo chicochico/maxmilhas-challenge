@@ -1,12 +1,14 @@
 from django.core.exceptions import ValidationError
 
-from django.db import IntegrityError
 from rest_framework import serializers
 
 from cpf.models import CPF, CPFBlacklist
 
 
 class CPFSerializer(serializers.ModelSerializer):
+    """
+    Serialize a single CPF instance
+    """
     class Meta:
         model = CPF
         fields = ('number',)
@@ -42,19 +44,26 @@ class CPFStatusSerializer(serializers.Serializer):
     blacklisted = serializers.SerializerMethodField()
 
     def get_cpf(self, cpf_number):
+        """
+        Get the number of the CPF
+        raises: ValidationError
+        """
         if cpf_number is not None:
             cpf = CPF(number=cpf_number)
             if cpf.is_valid():
                 return cpf.number
             else:
-               raise serializers.ValidationError(
-                   {'number': 'Invalid CPF number.'}
-               )
+                raise serializers.ValidationError(
+                    {'number': 'Invalid CPF number.'}
+                )
         else:
             raise serializers.ValidationError(
-                    {'number': 'CPF number is required.'}
+                {'number': 'CPF number is required.'}
             )
 
     def get_blacklisted(self, cpf_number):
+        """
+        Get if a CPF is blacklisted
+        """
         return CPFBlacklist.is_blacklisted(cpf_number)
 

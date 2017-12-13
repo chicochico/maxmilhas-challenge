@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
-from cpf_site.forms import CheckCPFForm
 from django.shortcuts import render
+from cpf_site.forms import CheckCPFForm
 from cpf.models import CPFBlacklist
 
 

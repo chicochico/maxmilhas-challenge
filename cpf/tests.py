@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from cpf.models import CPF, CPFBlacklist
 
@@ -42,5 +41,3 @@ class TestCPFInsertion(TestCase):
     def test_non_existing_cpf_is_not_blacklisted(self):
         number = '62563415462'
         self.assertFalse(CPFBlacklist.is_blacklisted(number))
-
-

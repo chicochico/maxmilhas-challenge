@@ -4,10 +4,9 @@ from django.core.cache import cache
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import list_route, api_view
-from cpf.models import CPF, CPFBlacklist
+from cpf.models import CPFBlacklist
 from api.serializers import CPFBlacklistSerializer
 from api.serializers import CPFStatusSerializer
-from api.serializers import CPFSerializer
 
 
 class CPFBlacklistViewSet(mixins.CreateModelMixin,
@@ -52,4 +51,3 @@ def server_status(request):
         'uptime': str(datetime.now() - settings.START_TIME),
         'blacklisted_cpf_count': CPFBlacklist.objects.all().count()
     })
-

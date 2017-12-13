@@ -1,0 +1,34 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Check CPF</title>
+  </head>
+
+  <body>
+    <div class="container" style="width: 300px; margin-top: 10px;">
+      <div class="page-header text-muted">
+        <h4>Check CPF</h4>
+      </div>
+      <form method="get">
+        {% bootstrap_form form %}
+        {% bootstrap_button "Submit" button_type="submit" button_class="btn-primary" size="small"%}
+      </form>
+      {% if msg %}
+        {% bootstrap_alert msg dismissable=False %}
+      {% endif %}
+      <a href="{% url 'docs' %}">Checkout the API here</a>
+    </div>
+  </body>
+</html>
+

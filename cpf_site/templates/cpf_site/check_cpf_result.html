@@ -1,0 +1,44 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Check CPF</title>
+  </head>
+
+  <body>
+    <div class="container" style="width: 300px; margin-top: 10px;">
+      <div class="page-header text-muted">
+        <h4>
+          CPF: {{ cpf }}
+          {% if blacklisted %}
+            <span class="label label-warning pull-right">Block</span>
+          {% else %}
+            <span class="label label-success pull-right">Free</span>
+          {% endif %}
+        </h4>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="cpf" value={{ cpf }}>
+        {% bootstrap_button "Back" href="/check-cpf/" button_class="btn-primary" size="small" %}
+        {% if blacklisted %}
+          {% bootstrap_button "Whitelist" button_type="submit" button_class="btn-warning" size="small" %}
+        {% else %}
+          {% bootstrap_button "Blacklist" button_type="submit" button_class="btn-warning" size="small" %}
+        {% endif %}
+      </form>
+    </div>
+  </body>
+</html>
+

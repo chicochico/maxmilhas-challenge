@@ -107,6 +107,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # pyenv
 .python-version
@@ -139,4 +140,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# vim
+Session.vim
 # End of https://www.gitignore.io/api/macos,python,django

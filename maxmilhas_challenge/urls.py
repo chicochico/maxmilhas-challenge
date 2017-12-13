@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
+from django.views.generic.base import RedirectView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^check-cpf/', include('cpf_site.urls')),
+    url(r'^api/v1/', include('api.urls')),
+    url(r'^$', RedirectView.as_view(url='/check-cpf', permanent=False), name='redirect'),
 ]
